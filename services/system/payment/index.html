@@ -1,0 +1,28 @@
+<!-- Include Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+  document.getElementById('payment-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const { clientSecret } = await fetch('https://your-vercel-app.vercel.app/api/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: amount, currency: currency })
+    }).then(r => r.json());
+
+    const result = await stripe.confirmApplePayPayment(clientSecret, {
+      payment_method: {
+        // Apple Pay specific details
+      }
+    });
+
+    if (result.error) {
+      // Handle error
+      console.log(result.error.message);
+    } else {
+      // Payment succeeded
+      console.log('Payment succeeded!');
+    }
+  });
+</script>
